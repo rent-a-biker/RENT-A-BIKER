@@ -13,6 +13,7 @@
 # (field names verified against the current spec, Oct 2026: `runtime`
 # replaces the deprecated `env`; plans use the new 0.5c-512mb-style IDs.)
 
+
 services:
   - type: web
     name: rent-a-biker
@@ -52,11 +53,12 @@ services:
       mountPath: /opt/render/project/src/uploads
       sizeGB: 1
 
+
 databases:
   - name: rent-a-biker-db
     databaseName: rentabiker
     # Kenneth's pick: ~$6/mo Postgres tier.
-    plan: 256mb
+    plan: 0.1c-256mb
     region: virginia
     # Empty allow-list = reachable only over Render's private network.
     ipAllowList: []
