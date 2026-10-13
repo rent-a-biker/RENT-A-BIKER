@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Rent a Biker — book a motorcycle ride with an independent biker.">
+<meta name="theme-color" content="#141414">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+<title>Rent a Biker — full app (in build)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, system-ui, sans-serif;
+         background: #141414; color: #f5f5f5; padding: 24px 16px; }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 8px 0; letter-spacing: 1px; }
+  h3 { margin: 0 0 4px; }
+  .badge { display: inline-block; background: #e8641c; color: #111;
+           font-weight: 700; font-size: 12px; padding: 4px 10px;
+           border-radius: 999px; text-transform: uppercase; }
+  p { line-height: 1.55; color: #cfcfcf; }
+  a { color: #e8641c; }
+  .card { background: #1e1e1e; border: 1px solid #333; border-radius: 12px;
+          padding: 16px; margin-top: 16px; }
+  code { background: #000; padding: 2px 6px; border-radius: 6px; }
+  label { display: block; font-size: 13px; color: #aaa; margin: 10px 0 4px; }
+  input, textarea, select { width: 100%; padding: 12px; font-size: 16px;
+          border-radius: 8px; border: 1px solid #444; background: #111;
+          color: #fff; }
+  textarea { min-height: 64px; resize: vertical; }
+  .btnrow { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  button { flex: 1; min-width: 140px; padding: 12px; font-size: 16px;
+           font-weight: 700; border: 0; border-radius: 8px; cursor: pointer; }
+  .btn-primary { background: #e8641c; color: #111; }
+  .btn-ghost { background: #333; color: #fff; }
+  .btn-ghost.active { background: #e8641c; color: #111; border-color: #e8641c; }
+  .btn-danger { background: #5a1f1f; color: #ff9b9b; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  .err { color: #ff7b7b; font-size: 14px; min-height: 20px; margin-top: 8px; }
+  .hidden { display: none; }
+  #toggleBtn { width: 100%; min-height: 72px; font-size: 20px; border-radius: 12px; }
+  #toggleBtn.on { background: #2fae4e; color: #06230e; }
+  #toggleBtn.off { background: #3a3a3a; color: #ddd; }
+  .status-line { font-size: 14px; color: #cfcfcf; margin: 6px 0; }
+  .pill { display: inline-block; font-size: 12px; font-weight: 700;
+          padding: 3px 10px; border-radius: 999px; background: #333; }
+  .pill.ok { background: #2fae4e; color: #06230e; }
+  .pill.warn { background: #e8641c; color: #111; }
+  .note { font-size: 13px; color: #999; margin-top: 10px; }
+  .seg { display: flex; gap: 8px; margin-top: 8px; }
+  .seg button { border: 1px solid #444; background: #111; color: #ddd; }
+  .seg button.active { background: #e8641c; color: #111; border-color: #e8641c; }
+  .waiverbox { background: #111; border: 1px solid #555; border-radius: 8px;
+               padding: 12px; margin-top: 12px; font-size: 13px; color: #cfcfcf;
+               line-height: 1.5; }
+  .checkline { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; }
+  .checkline input { width: auto; margin-top: 3px; transform: scale(1.3); }
+  .checkline label { margin: 0; font-size: 14px; color: #ddd; }
+  .farebox { background: #0f2a16; border: 1px solid #2fae4e; border-radius: 8px;
+             padding: 12px; margin-top: 12px; font-size: 18px; font-weight: 700; }
+  .ridecard { background: #111; border: 1px solid #333; border-radius: 8px;
+              padding: 12px; margin-top: 10px; }
+  .ridecard .row { display: flex; justify-content: space-between; gap: 8px;
+                   font-size: 14px; margin: 4px 0; color: #cfcfcf; }
+  .ridecard .row strong { color: #fff; }
+  .ridecard .cancel { margin-top: 8px; padding: 8px; font-size: 14px; min-width: 0; }
+  .cand { background: #0f0f0f; border: 1px solid #3a3a3a; border-radius: 8px;
+          padding: 10px; margin-top: 8px; display: flex; gap: 10px;
+          align-items: flex-start; }
+  .cand img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+  .cand .grow { flex: 1; min-width: 0; }
+  .cand .row { display: flex; justify-content: space-between; gap: 8px;
+               font-size: 13px; margin: 3px 0; color: #cfcfcf; }
+  .cand .row strong { color: #fff; }
+  .bikerbox { background: #0f2a16; border: 1px solid #2fae4e; border-radius: 8px;
+              padding: 10px; margin-top: 8px; display: flex; gap: 10px;
+              align-items: center; font-size: 14px; color: #cfcfcf; }
+  .bikerbox img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+  .bikerbox strong { color: #fff; }
+  .countdown { color: #ffd166; font-weight: 700; }
+  .cand .assign { min-width: 96px; padding: 12px 8px; font-size: 14px; }
+  .contact { font-size: 13px; color: #cfcfcf; margin: 6px 0 2px;
+             background: #0f0f0f; border: 1px dashed #444; border-radius: 8px;
+             padding: 8px 10px; }
+  .candhead { font-size: 14px; color: #fff; margin: 10px 0 2px; font-weight: 700; }
+  /* in-app messaging (M5) */
+  .thread { margin-top: 10px; border-top: 1px solid #333; padding-top: 8px; }
+  .msglist { max-height: 260px; overflow-y: auto; display: flex; flex-direction: column;
+             gap: 6px; margin: 8px 0; }
+  .msg { background: #242424; border-radius: 8px; padding: 8px 10px; font-size: 14px;
+         color: #ddd; max-width: 92%; align-self: flex-start; }
+  .msg.mine { background: #3a2413; align-self: flex-end; }
+  .msg strong { color: #fff; font-size: 13px; }
+  .msg .role { color: #999; font-weight: 400; }
+  .msgrow { display: flex; gap: 8px; }
+  .msgrow input { flex: 1; }
+  .msgrow button { flex: 0 0 auto; min-width: 80px; padding: 8px 12px; font-size: 14px; }
+  .msgtoggle { margin-top: 8px; padding: 8px; font-size: 14px; min-width: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">Internal build</span>
+  <h1>🏍️ RENT A BIKER</h1>
+  <p>The full Rent a Biker app is under construction here. Riders and bikers will
+     get accounts, request rides, message each other, and get matched — all inside
+     this app. Nothing here is customer-facing yet.</p>
+
+  <div class="card">
+    <p><strong>API status:</strong> <code id="health">checking…</code></p>
+    <p><strong>API docs:</strong> <a href="/docs">/docs</a></p>
+    <p><strong>Rates:</strong> $2.50/mile rides · $75/hr events (2-hr min) · bikers keep 75%</p>
+  </div>
+
+  <!-- Sign in / register (both roles) -->
+  <div class="card" id="accountCard">
+    <h3>Sign in</h3>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="••••••••">
+    <label for="fullname">Full name <span style="color:#777">(register only)</span></label>
+    <input id="fullname" type="text" autocomplete="name" placeholder="Your name">
+    <div class="btnrow">
+      <button class="btn-ghost" id="loginBtn" type="button">Log in</button>
+      <button class="btn-primary" id="registerRiderBtn" type="button">Register as rider</button>
+      <button class="btn-primary" id="registerBikerBtn" type="button">Register as biker</button>
+    </div>
+    <div class="err" id="authErr"></div>
+  </div>
+
+  <!-- Biker panel (M2) -->
+  <div class="card hidden" id="bikerCard">
+    <h3>Your availability</h3>
+    <div id="profileInfo"><p class="status-line">Loading profile…</p></div>
+    <div class="btnrow">
+      <button id="toggleBtn" class="off" type="button" disabled>…</button>
+    </div>
+    <p class="note">This switch tells the app you're ready to ride. You'll only
+       appear in dispatch after Kenneth approves your application.</p>
+
+    <!-- Biker profile form (create + edit, M2) -->
+    <div id="profileFormWrap" class="hidden">
+      <h3 id="profileFormTitle">Create your biker profile</h3>
+
+      <label for="bikeYear">Bike year</label>
+      <input id="bikeYear" type="number" min="1950" max="2030" placeholder="e.g. 2020">
+      <label for="bikeMake">Bike make</label>
+      <input id="bikeMake" type="text" placeholder="e.g. Harley-Davidson">
+      <label for="bikeModel">Bike model</label>
+      <input id="bikeModel" type="text" placeholder="e.g. Street Bob">
+
+      <label for="pCity">City</label>
+      <input id="pCity" type="text" placeholder="e.g. Pensacola">
+      <label for="pState">State (2 letters)</label>
+      <input id="pState" type="text" maxlength="2" placeholder="e.g. FL">
+      <label for="pRadius">Service radius (miles)</label>
+      <input id="pRadius" type="number" min="1" max="500" placeholder="50">
+
+      <div class="checkline">
+        <input id="pEndorsement" type="checkbox">
+        <label for="pEndorsement">I have a motorcycle endorsement on my license</label>
+      </div>
+      <div class="checkline">
+        <input id="pPledge" type="checkbox">
+        <label for="pPledge"><span id="pledgeText">Trusted-biker pledge — I agree to ride safe and treat every rider with respect</span></label>
+      </div>
+      <div class="checkline">
+        <input id="pLiability" type="checkbox">
+        <label for="pLiability"><span id="liabilityText">I have read and accept the biker liability agreement</span></label>
+      </div>
+
+      <div class="checkline">
+        <input id="pInsured" type="checkbox">
+        <label for="pInsured">🛡️ I carry motorcycle insurance</label>
+      </div>
+      <div id="insDetailWrap" class="hidden">
+        <label for="insCompany">Insurance company <span style="color:#777">(optional)</span></label>
+        <input id="insCompany" type="text" placeholder="e.g. Progressive">
+        <label for="insPolicy">Policy number <span style="color:#777">(optional)</span></label>
+        <input id="insPolicy" type="text" placeholder="e.g. POL-123">
+        <label for="insExp">Policy expiration <span style="color:#777">(optional)</span></label>
+        <input id="insExp" type="date">
+        <div class="checkline">
+          <input id="insCovers" type="checkbox">
+          <label for="insCovers">My policy covers passengers</label>
+        </div>
+        <div id="respWrap" class="hidden">
+          <div class="waiverbox">
+            <strong>Passenger-responsibility agreement</strong> — my insurance
+            does not cover passengers, so I accept personal responsibility
+            for anything that happens to the passenger during the ride.
+          </div>
+          <div class="checkline">
+            <input id="respAccept" type="checkbox">
+            <label for="respAccept">I accept the passenger-responsibility agreement</label>
+          </div>
+          <label for="respName">Typed name (signature)</label>
+          <input id="respName" type="text" placeholder="Type your full name">
+          <label for="respDate">Date</label>
+          <input id="respDate" type="date">
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn-primary" id="saveProfileBtn" type="button">Save profile</button>
+        <button class="btn-ghost hidden" id="cancelEditBtn" type="button">Cancel</button>
+      </div>
+      <div class="err" id="profileErr"></div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn-ghost hidden" id="editProfileBtn" type="button">Edit profile</button>
+      <button class="btn-ghost" id="logoutBtnBiker" type="button">Log out</button>
+    </div>
+    <div class="err" id="toggleErr"></div>
+
+    <!-- Biker's matched rides + messaging (M5) -->
+    <div id="bikerRidesWrap" class="hidden">
+      <h3 style="margin-top:12px">My matched rides</h3>
+      <div id="bikerRidesList"><p class="status-line">Loading…</p></div>
+      <div class="err" id="bikerRidesErr"></div>
+    </div>
+
+    <!-- Biker earnings: their own payout records + 75% totals (M7 part 3) -->
+    <div id="bikerEarningsWrap" class="hidden">
+      <h3 style="margin-top:12px">💰 Earnings</h3>
+      <div id="bikerEarningsSummary"><p class="status-line">Loading…</p></div>
+      <div id="bikerEarningsList"></div>
+      <div class="err" id="bikerEarningsErr"></div>
+    </div>
+  </div>
+
+  <!-- Admin dispatch board (M4) -->
+  <div class="card hidden" id="adminCard">
+    <h3>Dispatch board</h3>
+    <p class="note">Pending rides with ranked biker candidates, nearest first.
+       Assign a biker to dispatch the ride to them.</p>
+    <div class="btnrow">
+      <button class="btn-ghost" id="refreshDispatchBtn" type="button">Refresh board</button>
+    </div>
+    <div id="dispatchBoard"><p class="status-line">Loading board…</p></div>
+    <div class="err" id="dispatchErr"></div>
+
+    <!-- Matched rides waiting to be completed (M7) -->
+    <h3 style="margin-top:12px">Matched rides</h3>
+    <p class="note">Rides with a biker that aren't completed yet. Complete a ride
+       after it's done (the biker can also do this from their own panel) —
+       the 75/25 payout split is recorded automatically.</p>
+    <div class="btnrow">
+      <button class="btn-ghost" id="refreshMatchedBtn" type="button">Refresh matched</button>
+    </div>
+    <div id="matchedList"><p class="status-line">Loading…</p></div>
+    <div class="err" id="matchedErr"></div>
+
+    <!-- Payout queue: manual PayPal record-keeping (M7) -->
+    <h3 style="margin-top:12px">Payout queue</h3>
+    <p class="note">Completed rides and their recorded splits. PayPal payouts are
+       manual — mark a payout paid once you've sent the biker their money.</p>
+    <div id="payoutSummary"><p class="status-line">Loading summary…</p></div>
+    <div class="btnrow">
+      <button class="btn-ghost active" id="payoutFilterPending" type="button">Pending</button>
+      <button class="btn-ghost" id="payoutFilterPaid" type="button">Paid</button>
+      <button class="btn-ghost" id="refreshPayoutsBtn" type="button">Refresh</button>
+      <button class="btn-ghost" id="exportPayoutsBtn" type="button">⬇ Export CSV</button>
+    </div>
+    <div id="payoutsList"><p class="status-line">Loading…</p></div>
+    <div class="err" id="payoutsErr"></div>
+
+    <!-- Legacy import (M8): static-app-era signup lists into accounts -->
+    <h3 style="margin-top:12px">Legacy import</h3>
+    <p class="note">Bring in rider or biker signup lists from the static app's era as
+       real accounts. Download the template, fill one row per signup, and upload it —
+       imported bikers land in the review queue as <em>pending</em> (pledge, liability,
+       and insurance are still completed in-app, then you approve). Each new account
+       gets a one-time temporary password: download the sign-in list right after
+       importing — the passwords are never stored and can't be recovered later.</p>
+    <div class="btnrow">
+      <button class="btn-ghost" id="tplRidersBtn" type="button">⬇ Riders template</button>
+      <button class="btn-ghost" id="tplBikersBtn" type="button">⬇ Bikers template</button>
+    </div>
+    <div class="btnrow" style="margin-top:8px">
+      <select id="importKind" aria-label="Import kind">
+        <option value="riders">Riders</option>
+        <option value="bikers">Bikers</option>
+      </select>
+      <input id="importFile" type="file" accept=".csv,text/csv" aria-label="CSV file">
+      <button class="btn-ghost" id="importUploadBtn" type="button">⬆ Import CSV</button>
+      <button class="btn-ghost hidden" id="importCredsBtn" type="button">⬇ Sign-in list</button>
+    </div>
+    <div id="importResult"></div>
+    <div class="err" id="importErr"></div>
+  </div>
+
+  <!-- Rider panel (M3) -->
+  <div class="card hidden" id="riderCard">
+    <h3>Book a ride</h3>
+    <div class="seg">
+      <button type="button" id="typeRideBtn" class="active">🏍️ Ride</button>
+      <button type="button" id="typeEventBtn">🎉 Event</button>
+    </div>
+    <div id="eventHint" class="note hidden">$75/hr, 2-hour minimum. The biker stays with you for the whole event.</div>
+
+    <label for="pickup">Pickup address</label>
+    <input id="pickup" type="text" placeholder="123 Main St, City, ST">
+
+    <div id="dropoffWrap">
+      <label for="dropoff">Drop-off address</label>
+      <input id="dropoff" type="text" placeholder="456 Oak Ave, City, ST">
+    </div>
+
+    <label for="when">Date &amp; time</label>
+    <input id="when" type="datetime-local">
+
+    <div id="milesWrap">
+      <label for="miles">Estimated miles</label>
+      <input id="miles" type="number" min="0" step="0.1" placeholder="e.g. 20">
+    </div>
+    <div id="hoursWrap" class="hidden">
+      <label for="hours">Duration (hours)</label>
+      <input id="hours" type="number" min="0" step="0.5" placeholder="e.g. 3">
+    </div>
+
+    <label for="notes">Notes for the biker <span style="color:#777">(optional)</span></label>
+    <textarea id="notes" placeholder="e.g. passenger size, meeting spot, event details"></textarea>
+
+    <div class="checkline">
+      <input id="helmet" type="checkbox">
+      <label for="helmet">🪖 Request a helmet — I need the biker to bring one</label>
+    </div>
+
+    <div class="farebox hidden" id="fareBox">Estimated fare: <span id="fareAmt">$0.00</span></div>
+
+    <div class="waiverbox">
+      <strong>Liability waiver</strong> — <span id="waiverText">Loading…</span>
+    </div>
+    <div class="checkline">
+      <input id="waiverCheck" type="checkbox">
+      <label for="waiverCheck">I have read and agree to the liability waiver above</label>
+    </div>
+    <label for="waiverName">Typed name (signature)</label>
+    <input id="waiverName" type="text" placeholder="Type your full name">
+    <label for="waiverDate">Date</label>
+    <input id="waiverDate" type="date">
+
+    <div class="btnrow">
+      <button class="btn-primary" id="bookBtn" type="button">Request ride</button>
+    </div>
+    <div class="err" id="bookErr"></div>
+  </div>
+
+  <div class="card hidden" id="myRidesCard">
+    <h3>My rides</h3>
+    <div id="ridesList"><p class="status-line">Loading…</p></div>
+    <div class="btnrow">
+      <button class="btn-ghost" id="logoutBtnRider" type="button">Log out</button>
+    </div>
+    <div class="err" id="ridesErr"></div>
+  </div>
+</div>
+
+<script>
+  const TOKEN_KEY = 'rab_token';
+  let token = localStorage.getItem(TOKEN_KEY);
+  let me = null;
+  let profile = null;
+  let rideType = 'ride';
+
+  fetch('/health').then(r => r.json()).then(j => {
+    document.getElementById('health').textContent = j.ok ? 'OK' : 'DOWN';
+  }).catch(() => { document.getElementById('health').textContent = 'DOWN'; });
+
+  async function api(method, path, body, form) {
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    let payload;
+    if (body !== undefined) {
+      if (form) {
+        payload = new URLSearchParams(body).toString();
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      } else {
+        payload = JSON.stringify(body);
+        headers['Content-Type'] = 'application/json';
+      }
+    }
+    const res = await fetch(path, { method, headers, body: payload });
+    let data = null;
+    try { data = await res.json(); } catch (e) { /* non-JSON body */ }
+    return { status: res.status, data };
+  }
+
+  function show(el, on) { el.classList.toggle('hidden', !on); }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function fmtCents(c) { return '$' + (c / 100).toFixed(2); }
+
+  function fmtWhen(dt) {
+    if (!dt) return 'ASAP';
+    try { return new Date(dt).toLocaleString(); } catch (e) { return escapeHtml(dt); }
+  }
+
+  /* ---------- legal texts (M6): always rendered from the server, never hard-coded ---------- */
+  let legalLoaded = false;
+  async function loadLegalTexts() {
+    const fill = async (path, elId) => {
+      const r = await api('GET', path);
+      if (r.status !== 200 || !r.data || !r.data.text) return false;
+      document.getElementById(elId).textContent = r.data.text;
+      return true;
+    };
+    try {
+      const ok = await Promise.all([
+        fill('/legal/waiver', 'waiverText'),
+        fill('/legal/biker-pledge', 'pledgeText'),
+        fill('/legal/biker-liability', 'liabilityText'),
+      ]);
+      legalLoaded = ok.every(Boolean);
+    } catch (e) { legalLoaded = false; }
+    if (!legalLoaded) {
+      const err = document.getElementById('bookErr');
+      if (err) err.textContent = "Couldn't load the legal texts — please reload the page.";
+      document.getElementById('bookBtn').disabled = true;
+      document.getElementById('waiverText').textContent = 'Unavailable — please reload the page.';
+    }
+  }
+
+  async function refresh() {
+    const accountCard = document.getElementById('accountCard');
+    const bikerCard = document.getElementById('bikerCard');
+    const adminCard = document.getElementById('adminCard');
+    const riderCard = document.getElementById('riderCard');
+    const myRidesCard = document.getElementById('myRidesCard');
+    stopAllThreads();
+    if (!token) {
+      show(accountCard, true); show(bikerCard, false); show(adminCard, false);
+      show(riderCard, false); show(myRidesCard, false); return;
+    }
+    const r = await api('GET', '/auth/me');
+    if (r.status !== 200) { // bad/expired token
+      token = null; localStorage.removeItem(TOKEN_KEY);
+      show(accountCard, true); show(bikerCard, false); show(adminCard, false);
+      show(riderCard, false); show(myRidesCard, false); return;
+    }
+    me = r.data;
+    show(accountCard, false);
+    if (me.role === 'biker' || me.role === 'admin') {
+      show(bikerCard, true); show(riderCard, false); show(myRidesCard, false);
+      await loadProfile();
+      const isAdmin = me.role === 'admin';
+      show(adminCard, isAdmin);
+      show(document.getElementById('bikerRidesWrap'), !isAdmin);
+      show(document.getElementById('bikerEarningsWrap'), !isAdmin);
+      if (isAdmin) { await loadDispatch(); await loadMatched(); await loadPayouts(); }
+      else { await loadBikerRides(); await loadBikerEarnings(); }
+    } else {
+      show(bikerCard, false); show(adminCard, false);
+      show(riderCard, true); show(myRidesCard, true);
+      document.getElementById('waiverName').value = me.full_name || '';
+      document.getElementById('waiverDate').value = new Date().toISOString().slice(0, 10);
+      await loadMyRides();
+    }
+  }
+
+  function doLogout() {
+    token = null; me = null; profile = null;
+    localStorage.removeItem(TOKEN_KEY);
+    refresh();
+  }
+
+  /* ---------- biker panel (M2) ---------- */
+
+  async function loadProfile() {
+    const info = document.getElementById('profileInfo');
+    const btn = document.getElementById('toggleBtn');
+    const editBtn = document.getElementById('editProfileBtn');
+    const r = await api('GET', '/bikers/profile/me');
+    if (r.status === 404) {
+      profile = null;
+      info.innerHTML = '<p class="status-line">No biker profile yet — ' +
+        'create yours below, then flip your availability switch.</p>';
+      btn.disabled = true;
+      btn.className = 'off';
+      btn.textContent = 'No profile yet';
+      show(editBtn, false);
+      openProfileForm(null);
+      return;
+    }
+    if (r.status !== 200) {
+      info.innerHTML = '<p class="status-line">Could not load profile.</p>';
+      btn.disabled = true;
+      return;
+    }
+    profile = r.data;
+    const approval = profile.approval_status === 'approved'
+      ? '<span class="pill ok">Approved</span>'
+      : '<span class="pill warn">' + escapeHtml(profile.approval_status) + '</span>';
+    const bike = [profile.bike_year, profile.bike_make, profile.bike_model]
+      .filter(Boolean).join(' ');
+    const insBadge = profile.has_insurance
+      ? (profile.insurance_covers_passenger
+        ? '<span class="pill ok">🛡️ insured · passenger covered</span>'
+        : '<span class="pill warn">⚠️ insured · responsibility signed</span>')
+      : '<span class="pill">no insurance on file</span>';
+    info.innerHTML =
+      '<p class="status-line"><strong>' + escapeHtml(me.full_name) + '</strong> · ' +
+      escapeHtml(bike) + ' · ' + escapeHtml(profile.city) + ', ' +
+      escapeHtml(profile.state) + '</p>' +
+      '<p class="status-line">Application: ' + approval + ' · Insurance: ' + insBadge + '</p>' +
+      (profile.approval_status === 'approved'
+        ? '<p class="status-line">Dispatch: ' +
+          (profile.is_available
+            ? '<span class="pill ok">You appear in dispatch</span>'
+            : '<span class="pill">Hidden — flip the switch to appear</span>') + '</p>'
+        : '<p class="status-line">Dispatch: <span class="pill">Waiting on approval</span></p>');
+    btn.disabled = false;
+    btn.className = profile.is_available ? 'on' : 'off';
+    btn.textContent = profile.is_available ? "✅ You're AVAILABLE" : 'Go offline';
+    show(editBtn, true);
+    show(document.getElementById('profileFormWrap'), false);
+    show(document.getElementById('cancelEditBtn'), false);
+  }
+
+  /* ---------- biker profile form (create + edit) ---------- */
+
+  function setIf(id, v) { document.getElementById(id).value = (v == null ? '' : v); }
+
+  function openProfileForm(p) {
+    document.getElementById('profileFormTitle').textContent =
+      p ? 'Edit your biker profile' : 'Create your biker profile';
+    setIf('bikeYear', p && p.bike_year);
+    setIf('bikeMake', p && p.bike_make);
+    setIf('bikeModel', p && p.bike_model);
+    setIf('pCity', p && p.city);
+    setIf('pState', p && p.state);
+    setIf('pRadius', p ? p.service_radius_miles : 50);
+    document.getElementById('pEndorsement').checked = !!(p && p.has_endorsement);
+    document.getElementById('pPledge').checked = !!(p && p.pledge_accepted);
+    document.getElementById('pLiability').checked = !!(p && p.liability_accepted);
+    document.getElementById('pInsured').checked = !!(p && p.has_insurance);
+    setIf('insCompany', p && p.insurance_company);
+    setIf('insPolicy', p && p.insurance_policy_number);
+    setIf('insExp', p && p.insurance_expiration_date);
+    document.getElementById('insCovers').checked = !!(p && p.insurance_covers_passenger);
+    document.getElementById('respAccept').checked = !!(p && p.passenger_responsibility_accepted);
+    setIf('respName', p && p.passenger_responsibility_name);
+    setIf('respDate', p && p.passenger_responsibility_date);
+    document.getElementById('profileErr').textContent = '';
+    refreshInsBlocks();
+    show(document.getElementById('profileFormWrap'), true);
+    show(document.getElementById('cancelEditBtn'), !!p);
+  }
+
+  function refreshInsBlocks() {
+    const insured = document.getElementById('pInsured').checked;
+    const covers = document.getElementById('insCovers').checked;
+    show(document.getElementById('insDetailWrap'), insured);
+    show(document.getElementById('respWrap'), insured && !covers);
+  }
+
+  async function saveProfile() {
+    const err = document.getElementById('profileErr');
+    err.textContent = '';
+    const bikeYear = parseInt(document.getElementById('bikeYear').value, 10);
+    const body = {
+      bike_year: isNaN(bikeYear) ? null : bikeYear,
+      bike_make: document.getElementById('bikeMake').value.trim(),
+      bike_model: document.getElementById('bikeModel').value.trim(),
+      city: document.getElementById('pCity').value.trim(),
+      state: document.getElementById('pState').value.trim(),
+      service_radius_miles: parseInt(document.getElementById('pRadius').value, 10) || 50,
+      has_endorsement: document.getElementById('pEndorsement').checked,
+      pledge_accepted: document.getElementById('pPledge').checked,
+      liability_accepted: document.getElementById('pLiability').checked,
+      has_insurance: document.getElementById('pInsured').checked,
+      insurance_company: document.getElementById('insCompany').value.trim() || null,
+      insurance_policy_number: document.getElementById('insPolicy').value.trim() || null,
+      insurance_expiration_date: document.getElementById('insExp').value || null,
+      insurance_covers_passenger: document.getElementById('insCovers').checked,
+      passenger_responsibility_accepted: document.getElementById('respAccept').checked,
+      passenger_responsibility_name: document.getElementById('respName').value.trim() || null,
+      passenger_responsibility_date: document.getElementById('respDate').value || null,
+    };
+    if (!body.bike_make || !body.bike_model || !body.city || !body.state) {
+      err.textContent = 'Bike make, model, city, and state are required.'; return;
+    }
+    if (!body.has_endorsement || !body.pledge_accepted || !body.liability_accepted) {
+      err.textContent = 'Endorsement, trusted-biker pledge, and liability agreement are all required to apply.'; return;
+    }
+    if (body.has_insurance && !body.insurance_covers_passenger &&
+        (!body.passenger_responsibility_accepted ||
+         !body.passenger_responsibility_name ||
+         !body.passenger_responsibility_date)) {
+      err.textContent = 'Without passenger coverage, the passenger-responsibility agreement (checkbox + typed name + date) is required.'; return;
+    }
+    const r = await api('POST', '/bikers/profile', body);
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Could not save the profile.';
+      return;
+    }
+    profile = r.data;
+    await loadProfile();
+  }
+
+  async function doToggle() {
+    const err = document.getElementById('toggleErr');
+    const btn = document.getElementById('toggleBtn');
+    err.textContent = '';
+    if (!profile) return;
+    btn.disabled = true;
+    const r = await api('POST', '/bikers/profile/availability',
+      { is_available: !profile.is_available });
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Could not flip the switch.';
+      btn.disabled = false;
+      return;
+    }
+    profile = r.data;
+    await loadProfile();
+  }
+
+  /* ---------- admin dispatch board (M4) ---------- */
+
+  function insuranceBadge(c) {
+    if (c.has_insurance && c.insurance_covers_passenger)
+      return '<span class="pill ok">🛡️ insured · passenger covered</span>';
+    if (c.has_insurance && c.passenger_responsibility_accepted)
+      return '<span class="pill warn">⚠️ insured · personal-responsibility signed</span>';
+    if (c.has_insurance)
+      return '<span class="pill warn">⚠️ insured · passenger coverage unconfirmed</span>';
+    return '<span class="pill">no insurance on file</span>';
+  }
+
+  function dispatchCandidate(rideId, c) {
+    const bike = [c.bike_year, c.bike_make, c.bike_model].filter(Boolean).join(' ');
+    const dist = (c.distance_miles == null) ? 'distance n/a'
+      : escapeHtml(String(c.distance_miles)) + ' mi away';
+    const photo = c.photo_url
+      ? '<img src="' + escapeHtml(c.photo_url) + '" alt="bike photo">'
+      : '';
+    const phoneLine = c.phone
+      ? '<a href="tel:' + escapeHtml(c.phone) + '">' + escapeHtml(c.phone) + '</a>'
+      : 'no phone';
+    return '<div class="cand">' + photo + '<div class="grow">' +
+      '<div class="row"><strong>' + escapeHtml(c.full_name) + '</strong>' +
+      '<span>' + dist + '</span></div>' +
+      '<div class="row"><span>' + escapeHtml(bike) + ' · ' +
+      escapeHtml(c.city) + ', ' + escapeHtml(c.state) + ' · ' + phoneLine + '</span></div>' +
+      '<div class="row"><span>' + insuranceBadge(c) + '</span></div>' +
+      '</div>' +
+      '<button class="btn-primary assign" id="assign-' + rideId + '-' + c.user_id +
+      '" type="button">Assign</button></div>';
+  }
+
+  function dispatchRideCard(ride) {
+    const detail = ride.ride_type === 'ride'
+      ? escapeHtml(String(ride.estimated_miles)) + ' mi · ' +
+        (ride.dropoff_address ? '→ ' + escapeHtml(ride.dropoff_address) : 'no drop-off')
+      : escapeHtml(String(ride.duration_hours)) + ' hr event';
+    const rider = ride.rider || {};
+    const contact = '<div class="contact">👤 <strong>' +
+      escapeHtml(rider.full_name || 'rider') + '</strong><br>✉️ ' +
+      '<a href="mailto:' + escapeHtml(rider.email || '') + '">' +
+      escapeHtml(rider.email || '') + '</a>' +
+      (rider.phone
+        ? '<br>📞 <a href="tel:' + escapeHtml(rider.phone) + '">' +
+          escapeHtml(rider.phone) + '</a>'
+        : '') +
+      '</div>';
+    const cands = ride.candidates && ride.candidates.length
+      ? ride.candidates.map(c => dispatchCandidate(ride.id, c)).join('')
+      : '<p class="status-line">No approved + available bikers right now.</p>';
+    return '<div class="ridecard">' +
+      '<div class="row"><strong>' + (ride.ride_type === 'ride' ? '🏍️ Ride' : '🎉 Event') +
+      ' #' + ride.id + '</strong><span><strong>' + fmtCents(ride.fare_estimate_cents) +
+      '</strong> <button class="btn-ghost automatch" id="automatch-' + ride.id +
+      '" type="button">Auto-match</button></span></div>' +
+      '<div class="row"><span>Pickup: ' + escapeHtml(ride.pickup_address) + '</span></div>' +
+      '<div class="row"><span>' + detail + ' · ' + fmtWhen(ride.scheduled_at) +
+      (ride.helmet_needed ? ' · 🪖 helmet requested' : '') + '</span></div>' +
+      contact +
+      '<button class="btn-ghost msgtoggle" id="msgtoggle-d-' + ride.id +
+      '" type="button">💬 Messages</button>' +
+      threadShell('d', ride.id) +
+      '<div class="candhead">Biker candidates (' +
+      (ride.candidates ? ride.candidates.length : 0) + ')</div>' +
+      cands + '</div>';
+  }
+
+  async function loadDispatch() {
+    const board = document.getElementById('dispatchBoard');
+    const err = document.getElementById('dispatchErr');
+    err.textContent = '';
+    board.innerHTML = '<p class="status-line">Loading board…</p>';
+    const r = await api('GET', '/admin/dispatch');
+    if (r.status !== 200) {
+      board.innerHTML = '<p class="status-line">Could not load the board.</p>';
+      err.textContent = (r.data && r.data.detail) || 'Board failed to load.';
+      return;
+    }
+    const requests = (r.data && r.data.requests) || [];
+    if (!requests.length) {
+      board.innerHTML = '<p class="status-line">No pending rides — the board is clear.</p>';
+      return;
+    }
+    board.innerHTML = requests.map(dispatchRideCard).join('');
+    requests.forEach(ride => {
+      const autoBtn = document.getElementById('automatch-' + ride.id);
+      if (autoBtn) autoBtn.addEventListener('click', () => autoMatchRide(ride.id));
+      wireThread(ride.id, 'd');
+      (ride.candidates || []).forEach(c => {
+        const btn = document.getElementById('assign-' + ride.id + '-' + c.user_id);
+        if (btn) btn.addEventListener('click', () =>
+          assignBiker(ride.id, c.user_id, c.full_name));
+      });
+    });
+  }
+
+  async function autoMatchRide(rideId) {
+    const err = document.getElementById('dispatchErr');
+    err.textContent = '';
+    if (!confirm('Auto-match the nearest eligible biker to ride #' + rideId + '?'))
+      return;
+    const r = await api('POST', '/admin/rides/' + rideId + '/auto-match');
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Auto-match failed.';
+      return;
+    }
+    const c = (r.data && r.data.assigned_candidate) || null;
+    alert('Matched ' + escapeHtml(c && c.full_name ? c.full_name : 'a biker') +
+      (c && c.distance_miles != null
+        ? ' (' + escapeHtml(String(c.distance_miles)) + ' mi away)'
+        : '') +
+      ' to ride #' + rideId + '.');
+    await loadDispatch();
+  }
+
+  async function assignBiker(rideId, userId, name) {
+    const err = document.getElementById('dispatchErr');
+    err.textContent = '';
+    if (!confirm('Assign ' + name + ' to ride #' + rideId + '?')) return;
+    const r = await api('POST', '/admin/rides/' + rideId + '/assign',
+      { biker_user_id: userId });
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Assign failed.';
+      return;
+    }
+    await loadDispatch();
+  }
+
+  /* ---------- matched rides + ride completion (M7) ---------- */
+
+  async function doCompleteRide(rideId, errId, afterDone) {
+    const err = document.getElementById(errId);
+    err.textContent = '';
+    if (!confirm('Mark ride #' + rideId + ' completed and record the payout split?'))
+      return;
+    const r = await api('POST', '/rides/' + rideId + '/complete');
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Could not complete the ride.';
+      return;
+    }
+    const p = (r.data && r.data.payout) || {};
+    alert('Ride #' + rideId + ' completed — payout recorded: ' +
+      fmtCents(p.biker_share_cents || 0) + ' to the biker, ' +
+      fmtCents(p.platform_share_cents || 0) + ' to Kenneth.');
+    await afterDone();
+  }
+
+  async function loadMatched() {
+    const list = document.getElementById('matchedList');
+    const err = document.getElementById('matchedErr');
+    err.textContent = '';
+    list.innerHTML = '<p class="status-line">Loading…</p>';
+    const r = await api('GET', '/admin/matched');
+    if (r.status !== 200) {
+      list.innerHTML = '<p class="status-line">Could not load matched rides.</p>';
+      err.textContent = (r.data && r.data.detail) || 'Matched rides failed to load.';
+      return;
+    }
+    const requests = (r.data && r.data.requests) || [];
+    if (!requests.length) {
+      list.innerHTML = '<p class="status-line">No matched rides — nothing waiting to be completed.</p>';
+      return;
+    }
+    list.innerHTML = requests.map(matchedRideCard).join('');
+    requests.forEach(ride => {
+      const btn = document.getElementById('complete-m-' + ride.id);
+      if (btn) btn.addEventListener('click', () =>
+        doCompleteRide(ride.id, 'matchedErr', loadMatched).then(loadPayouts));
+    });
+  }
+
+  function matchedRideCard(ride) {
+    const detail = ride.ride_type === 'ride'
+      ? escapeHtml(ride.estimated_miles) + ' mi · ' +
+        (ride.dropoff_address ? '→ ' + escapeHtml(ride.dropoff_address) : 'no drop-off')
+      : escapeHtml(ride.duration_hours) + ' hr event';
+    const biker = ride.biker ? escapeHtml(ride.biker.full_name) : '—';
+    return '<div class="ridecard">' +
+      '<div class="row"><strong>' + (ride.ride_type === 'ride' ? '🏍️ Ride' : '🎉 Event') +
+      ' #' + ride.id + '</strong><span><span class="pill ok">matched</span></span></div>' +
+      '<div class="row"><span>Rider: ' + escapeHtml(ride.rider.full_name) +
+      ' · Biker: ' + biker + '</span></div>' +
+      '<div class="row"><span>' + escapeHtml(ride.pickup_address) + '</span></div>' +
+      '<div class="row"><span>' + detail + '</span><strong>' + fmtCents(ride.fare_estimate_cents) + '</strong></div>' +
+      '<div class="row"><span>' + fmtWhen(ride.scheduled_at) + '</span></div>' +
+      '<button class="btn-primary" id="complete-m-' + ride.id +
+      '" type="button">✅ Ride complete</button></div>';
+  }
+
+  /* ---------- payout queue (M7) ---------- */
+
+  let payoutFilter = 'pending';
+
+  function setPayoutFilter(f) {
+    payoutFilter = f;
+    const pen = document.getElementById('payoutFilterPending');
+    const paid = document.getElementById('payoutFilterPaid');
+    if (pen) pen.classList.toggle('active', f === 'pending');
+    if (paid) paid.classList.toggle('active', f === 'paid');
+    loadPayouts();
+  }
+
+  async function loadPayouts() {
+    const list = document.getElementById('payoutsList');
+    const err = document.getElementById('payoutsErr');
+    err.textContent = '';
+    list.innerHTML = '<p class="status-line">Loading…</p>';
+    const s = await api('GET', '/admin/payouts/summary');
+    renderPayoutSummary(s.status === 200 ? s.data : null);
+    const r = await api('GET', '/admin/payouts?status=' + payoutFilter);
+    if (r.status !== 200) {
+      list.innerHTML = '<p class="status-line">Could not load the payout queue.</p>';
+      err.textContent = (r.data && r.data.detail) || 'Payouts failed to load.';
+      return;
+    }
+    const payouts = r.data || [];
+    if (!payouts.length) {
+      list.innerHTML = '<p class="status-line">No ' + escapeHtml(payoutFilter) +
+        ' payouts — the queue is clear.</p>';
+      return;
+    }
+    list.innerHTML = payouts.map(payoutCard).join('');
+    payouts.forEach(p => {
+      const btn = document.getElementById('paypaid-' + p.id);
+      if (btn) btn.addEventListener('click', () => markPayoutPaid(p.id));
+    });
+  }
+
+  async function exportPayoutsCsv() {
+    const err = document.getElementById('payoutsErr');
+    err.textContent = '';
+    // The auth token rides in a bearer header, so this can't be a plain
+    // <a href> download: fetch it, then trigger the download from a blob.
+    try {
+      const r = await fetch('/admin/payouts/export.csv?status=' + payoutFilter, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
+      });
+      if (!r.ok) { err.textContent = 'Export failed.'; return; }
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'rent-a-biker-payouts-' + payoutFilter + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) { err.textContent = 'Export failed.'; }
+  }
+
+  /* ---------- legacy import (M8) ---------- */
+
+  let lastImportCreds = null;
+
+  async function downloadImportTemplate(kind) {
+    const err = document.getElementById('importErr');
+    err.textContent = '';
+    try {
+      const r = await fetch('/admin/import/templates/' + kind + '.csv', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
+      });
+      if (!r.ok) { err.textContent = 'Template download failed.'; return; }
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'rent-a-biker-import-' + kind + '-template.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) { err.textContent = 'Template download failed.'; }
+  }
+
+  async function uploadImport() {
+    const err = document.getElementById('importErr');
+    const out = document.getElementById('importResult');
+    const credsBtn = document.getElementById('importCredsBtn');
+    err.textContent = ''; out.innerHTML = '';
+    show(credsBtn, false);
+    lastImportCreds = null;
+    const kind = document.getElementById('importKind').value;
+    const fileInput = document.getElementById('importFile');
+    if (!fileInput.files.length) {
+      err.textContent = 'Choose a CSV file first.';
+      return;
+    }
+    const form = new FormData();
+    form.append('kind', kind);
+    form.append('file', fileInput.files[0]);
+    let r, data = null;
+    try {
+      r = await fetch('/admin/import', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) },
+        body: form
+      });
+      data = await r.json();
+    } catch (e) { err.textContent = 'Upload failed: ' + e.message; return; }
+    if (r.status !== 201 || !data) {
+      err.textContent = (data && data.detail) ? data.detail : 'Import failed (' + r.status + ').';
+      return;
+    }
+    lastImportCreds = data.credentials || [];
+    let html = '<p class="status-line">✅ Imported <strong>' + data.created + '</strong> ' +
+      escapeHtml(kind) + ' (' + data.rows_total + ' rows; ' +
+      data.skipped_existing + ' already had accounts, ' +
+      data.errors.length + ' problem rows).</p>';
+    if (data.errors.length) {
+      html += '<p class="status-line">Problem rows:</p><ul class="status-line">' +
+        data.errors.slice(0, 20).map(e =>
+          '<li>row ' + e.row + ' (' + escapeHtml(e.email || 'no email') + '): ' +
+          escapeHtml(e.message) + '</li>').join('') + '</ul>';
+    }
+    if (lastImportCreds.length) {
+      html += '<p class="status-line">⚠️ ' + lastImportCreds.length +
+        ' temporary sign-in password' + (lastImportCreds.length === 1 ? ' was' : 's were') +
+        ' created — download the sign-in list now; they are never stored and ' +
+        'cannot be recovered later.</p>';
+      show(credsBtn, true);
+    }
+    out.innerHTML = html;
+  }
+
+  function downloadImportCreds() {
+    if (!lastImportCreds || !lastImportCreds.length) return;
+    const kind = document.getElementById('importKind').value;
+    const rows = lastImportCreds.map(c =>
+      '"' + String(c.email).replace(/"/g, '""') + '","' +
+      String(c.temp_password).replace(/"/g, '""') + '"');
+    const blob = new Blob(['email,temp_password\r\n' + rows.join('\r\n') + '\r\n'],
+      { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rent-a-biker-import-' + kind + '-credentials.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  function renderPayoutSummary(s) {
+    const el = document.getElementById('payoutSummary');
+    if (!s || !el) return;
+    const pen = s.pending || { count: 0, biker_cents: 0, platform_cents: 0 };
+    const paid = s.paid || { biker_cents: 0, platform_cents: 0 };
+    const plural = pen.count === 1 ? 'ride' : 'rides';
+    const bk = (s.by_biker || []).map(b =>
+      '<div class="row"><span>' + escapeHtml(b.biker_name) + '</span>' +
+      '<span>Owed ' + fmtCents(b.pending_biker_cents) +
+      ' (' + b.pending_count + ')</span></div>'
+    ).join('');
+    el.innerHTML = '<div class="ridecard">' +
+      '<div class="row"><span><strong>📊 Payout summary</strong></span></div>' +
+      '<div class="row"><span>Owe bikers <strong>' + fmtCents(pen.biker_cents) +
+      '</strong> (' + pen.count + ' ' + plural +
+      '); your cut ' + fmtCents(pen.platform_cents) + '</span></div>' +
+      '<div class="row"><span>Already paid: bikers ' + fmtCents(paid.biker_cents) +
+      '; your cut ' + fmtCents(paid.platform_cents) + '</span></div>' +
+      bk + '</div>';
+  }
+
+  function payoutCard(p) {
+    const pill = p.status === 'paid'
+      ? '<span class="pill ok">paid</span>'
+      : '<span class="pill">pending</span>';
+    const when = p.status === 'paid' && p.paid_at
+      ? 'Paid ' + fmtWhen(p.paid_at) +
+        (p.paid_reference ? ' · ref: ' + escapeHtml(p.paid_reference) : '')
+      : 'Recorded ' + fmtWhen(p.created_at);
+    const btn = p.status === 'pending'
+      ? '<button class="btn-primary" id="paypaid-' + p.id +
+        '" type="button">Mark paid</button>'
+      : '';
+    return '<div class="ridecard">' +
+      '<div class="row"><strong>💰 Payout #' + p.id + '</strong><span>' + pill + '</span></div>' +
+      '<div class="row"><span>Ride #' + p.ride_id + ' · ' +
+      escapeHtml(p.biker.full_name) + ' ← ' + escapeHtml(p.rider.full_name) +
+      '</span></div>' +
+      '<div class="row"><span>Fare ' + fmtCents(p.fare_cents) + '</span>' +
+      '<span>Biker ' + fmtCents(p.biker_share_cents) +
+      ' · Kenneth ' + fmtCents(p.platform_share_cents) + '</span></div>' +
+      '<div class="row"><span class="status-line">' + escapeHtml(when) + '</span></div>' +
+      btn + '</div>';
+  }
+
+  async function markPayoutPaid(payoutId) {
+    const err = document.getElementById('payoutsErr');
+    err.textContent = '';
+    const reference = prompt('PayPal transaction reference (optional):', '');
+    if (reference === null) return; // user cancelled the prompt
+    const r = await api('POST', '/admin/payouts/' + payoutId + '/mark-paid',
+      { reference: reference.trim() || null });
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Mark paid failed.';
+      return;
+    }
+    alert('Payout #' + payoutId + ' marked paid — ' +
+      fmtCents((r.data && r.data.biker_share_cents) || 0) + ' to ' +
+      escapeHtml((r.data && r.data.biker && r.data.biker.full_name) || 'the biker') + '.');
+    await loadPayouts();
+  }
+
+  /* ---------- in-app messaging (M5) ---------- */
+
+  const threadState = {}; // key -> { lastId: number, timer: id|null }
+  const MSG_POLL_MS = 10000; // polling first; websockets only if needed
+
+  function threadKey(ctx, rideId) { return ctx + '-' + rideId; }
+
+  function stopAllThreads() {
+    Object.keys(threadState).forEach(key => {
+      if (threadState[key].timer) clearInterval(threadState[key].timer);
+    });
+    for (const key in threadState) delete threadState[key];
+  }
+
+  function msgHtml(m) {
+    const mine = me && m.sender_id === me.id;
+    return '<div class="msg' + (mine ? ' mine' : '') + '">' +
+      '<strong>' + escapeHtml(m.sender_name) + ' <span class="role">(' +
+      escapeHtml(m.sender_role) + ')</span></strong><br>' +
+      escapeHtml(m.body) + '</div>';
+  }
+
+  function threadShell(ctx, rideId) {
+    const key = threadKey(ctx, rideId);
+    return '<div class="thread hidden" id="thread-' + key + '">' +
+      '<div class="msglist" id="msgs-' + key + '"></div>' +
+      '<div class="msgrow"><input id="msgin-' + key + '" type="text" maxlength="2000" ' +
+      'placeholder="Type a message…"><button class="btn-primary" id="msgsend-' + key +
+      '" type="button">Send</button></div>' +
+      '<div class="err" id="msgerr-' + key + '"></div></div>';
+  }
+
+  async function refreshThread(rideId, ctx) {
+    const key = threadKey(ctx, rideId);
+    const st = threadState[key];
+    if (!st) return;
+    const r = await api('GET', '/rides/' + rideId + '/messages?after_id=' + st.lastId);
+    if (r.status !== 200) {
+      const err = document.getElementById('msgerr-' + key);
+      if (err) err.textContent = (r.data && r.data.detail) || 'Could not load messages.';
+      return;
+    }
+    const msgs = r.data || [];
+    if (!msgs.length) return;
+    const list = document.getElementById('msgs-' + key);
+    if (!list) return;
+    list.insertAdjacentHTML('beforeend', msgs.map(msgHtml).join(''));
+    st.lastId = msgs[msgs.length - 1].id;
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function stopThread(rideId, ctx) {
+    const key = threadKey(ctx, rideId);
+    const st = threadState[key];
+    if (st && st.timer) clearInterval(st.timer);
+    delete threadState[key];
+  }
+
+  async function toggleThread(rideId, ctx) {
+    const key = threadKey(ctx, rideId);
+    const wrap = document.getElementById('thread-' + key);
+    if (!wrap) return;
+    const opening = wrap.classList.contains('hidden');
+    const btn = document.getElementById('msgtoggle-' + key);
+    if (!opening) {
+      show(wrap, false);
+      if (btn) btn.textContent = '💬 Messages';
+      stopThread(rideId, ctx);
+      return;
+    }
+    show(wrap, true);
+    if (btn) btn.textContent = '💬 Hide messages';
+    document.getElementById('msgs-' + key).innerHTML = '';
+    threadState[key] = { lastId: 0, timer: null };
+    await refreshThread(rideId, ctx);
+    threadState[key].timer = setInterval(() => refreshThread(rideId, ctx), MSG_POLL_MS);
+  }
+
+  async function sendMsg(rideId, ctx) {
+    const key = threadKey(ctx, rideId);
+    const input = document.getElementById('msgin-' + key);
+    const err = document.getElementById('msgerr-' + key);
+    const text = (input.value || '').trim();
+    if (err) err.textContent = '';
+    if (!text) return;
+    const r = await api('POST', '/rides/' + rideId + '/messages', { body: text });
+    if (r.status !== 201) {
+      if (err) err.textContent = (r.data && r.data.detail) || 'Message failed to send.';
+      return;
+    }
+    input.value = '';
+    await refreshThread(rideId, ctx);
+  }
+
+  function wireThread(rideId, ctx) {
+    const key = threadKey(ctx, rideId);
+    const t = document.getElementById('msgtoggle-' + key);
+    if (t) t.addEventListener('click', () => toggleThread(rideId, ctx));
+    const s = document.getElementById('msgsend-' + key);
+    if (s) s.addEventListener('click', () => sendMsg(rideId, ctx));
+    const i = document.getElementById('msgin-' + key);
+    if (i) i.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); sendMsg(rideId, ctx); }
+    });
+  }
+
+  /* ---------- biker assigned rides (M5) ---------- */
+
+  async function loadBikerRides() {
+    const list = document.getElementById('bikerRidesList');
+    const err = document.getElementById('bikerRidesErr');
+    err.textContent = '';
+    const r = await api('GET', '/rides/assigned');
+    if (r.status !== 200) {
+      list.innerHTML = '<p class="status-line">Could not load your rides.</p>';
+      err.textContent = (r.data && r.data.detail) || 'Rides failed to load.';
+      return;
+    }
+    const rides = r.data || [];
+    if (!rides.length) {
+      list.innerHTML = '<p class="status-line">No matched rides yet — dispatched rides will show here.</p>';
+      return;
+    }
+    list.innerHTML = rides.map(assignedRideCard).join('');
+    rides.forEach(ride => {
+      const cbtn = document.getElementById('complete-b-' + ride.id);
+      if (cbtn) cbtn.addEventListener('click', () =>
+        doCompleteRide(ride.id, 'bikerRidesErr', loadBikerRides));
+      wireThread(ride.id, 'b');
+    });
+  }
+
+  function assignedRideCard(ride) {
+    const statusPill = (ride.status === 'cancelled' || ride.status === 'completed')
+      ? '<span class="pill">' + escapeHtml(ride.status) + '</span>'
+      : '<span class="pill ok">' + escapeHtml(ride.status) + '</span>';
+    const statusLine = ride.status_detail
+      ? '<div class="row"><span class="status-line">' + escapeHtml(ride.status_detail) + '</span></div>'
+      : '';
+    const detail = ride.ride_type === 'ride'
+      ? escapeHtml(ride.estimated_miles) + ' mi · ' +
+        (ride.dropoff_address ? '→ ' + escapeHtml(ride.dropoff_address) : 'no drop-off')
+      : escapeHtml(ride.duration_hours) + ' hr event';
+    const thread = ride.status !== 'cancelled'
+      ? '<button class="btn-ghost msgtoggle" id="msgtoggle-b-' + ride.id +
+        '" type="button">💬 Messages</button>' + threadShell('b', ride.id)
+      : '';
+    const completeBtn = ride.status === 'matched'
+      ? '<button class="btn-primary" id="complete-b-' + ride.id +
+        '" type="button">✅ Ride complete</button>'
+      : '';
+    return '<div class="ridecard">' +
+      '<div class="row"><strong>' + (ride.ride_type === 'ride' ? '🏍️ Ride' : '🎉 Event') +
+      ' #' + ride.id + '</strong><span>' + statusPill + '</span></div>' +
+      statusLine +
+      '<div class="row"><span>Pickup: ' + escapeHtml(ride.pickup_address) + '</span></div>' +
+      '<div class="row"><span>' + detail + '</span><strong>' + fmtCents(ride.fare_estimate_cents) + '</strong></div>' +
+      '<div class="row"><span>' + fmtWhen(ride.scheduled_at) +
+      (ride.helmet_needed ? ' · 🪖 helmet requested' : '') + '</span></div>' +
+      (ride.waiver_version ? '<div class="row"><span class="status-line">Waiver v' +
+        escapeHtml(ride.waiver_version) + ' signed</span></div>' : '') +
+      completeBtn + thread + '</div>';
+  }
+
+  /* ---------- biker earnings (M7 part 3) ---------- */
+
+  async function loadBikerEarnings() {
+    const sum = document.getElementById('bikerEarningsSummary');
+    const list = document.getElementById('bikerEarningsList');
+    const err = document.getElementById('bikerEarningsErr');
+    err.textContent = '';
+    const r = await api('GET', '/rides/earnings');
+    if (r.status !== 200) {
+      sum.innerHTML = '<p class="status-line">Could not load your earnings.</p>';
+      err.textContent = (r.data && r.data.detail) || 'Earnings failed to load.';
+      return;
+    }
+    renderBikerEarnings(r.data || {});
+  }
+
+  function renderBikerEarnings(data) {
+    const sum = document.getElementById('bikerEarningsSummary');
+    const list = document.getElementById('bikerEarningsList');
+    const pend = data.pending_owed_cents || 0;
+    const pendN = data.pending_ride_count || 0;
+    const paid = data.paid_received_cents || 0;
+    const life = data.lifetime_biker_cents || 0;
+    sum.innerHTML = '<p class="status-line">Pending payout <strong>' +
+      fmtCents(pend) + '</strong> (' + pendN + (pendN === 1 ? ' ride' : ' rides') +
+      ') · Received so far <strong>' + fmtCents(paid) + '</strong>' +
+      ' · Lifetime your-cut <strong>' + fmtCents(life) + '</strong></p>';
+    const payouts = data.payouts || [];
+    if (!payouts.length) {
+      list.innerHTML = '<p class="status-line">No completed rides yet — ' +
+        'payouts land here when rides complete.</p>';
+      return;
+    }
+    list.innerHTML =
+      '<div class="row" style="margin-bottom:8px"><button class="btn-ghost" ' +
+      'id="exportEarningsBtn">⬇ Export CSV</button></div>' +
+      payouts.map(function (p) {
+      const pill = p.status === 'paid'
+        ? '<span class="pill ok">paid</span>'
+        : '<span class="pill">pending</span>';
+      return '<div class="ridecard">' +
+        '<div class="row"><strong>Ride #' + p.ride_id + '</strong><span>' + pill + '</span></div>' +
+        '<div class="row"><span>Fare: ' + fmtCents(p.fare_cents) +
+        ' · Your 75% cut: <strong>' + fmtCents(p.biker_share_cents) + '</strong></span></div>' +
+        '<div class="row"><span class="status-line">' +
+        (p.status === 'paid' && p.paid_at
+          ? 'Paid ' + fmtWhen(p.paid_at)
+          : 'Recorded ' + fmtWhen(p.created_at) + ' — Kenneth sends it manually') +
+        '</span></div></div>';
+    }).join('');
+    document.getElementById('exportEarningsBtn').addEventListener('click', exportEarningsCsv);
+  }
+
+  async function exportEarningsCsv() {
+    const err = document.getElementById('bikerEarningsErr');
+    err.textContent = '';
+    // The auth token rides in a Bearer <redacted>, so this can't be a plain
+    // <a href> download: fetch it, then trigger the download from a blob.
+    try {
+      const r = await fetch('/rides/earnings/export.csv', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
+      });
+      if (!r.ok) { err.textContent = 'Export failed.'; return; }
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'rent-a-biker-earnings.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) { err.textContent = 'Export failed.'; }
+  }
+
+  /* ---------- rider booking form (M3) ---------- */
+
+  function setRideType(t) {
+    rideType = t;
+    document.getElementById('typeRideBtn').classList.toggle('active', t === 'ride');
+    document.getElementById('typeEventBtn').classList.toggle('active', t === 'event');
+    show(document.getElementById('dropoffWrap'), t === 'ride');
+    show(document.getElementById('milesWrap'), t === 'ride');
+    show(document.getElementById('hoursWrap'), t === 'event');
+    show(document.getElementById('eventHint'), t === 'event');
+    updateEstimate();
+  }
+
+  let estimateTimer = null;
+  function scheduleEstimate() {
+    clearTimeout(estimateTimer);
+    estimateTimer = setTimeout(updateEstimate, 350);
+  }
+
+  async function updateEstimate() {
+    const box = document.getElementById('fareBox');
+    const body = { ride_type: rideType };
+    if (rideType === 'ride') {
+      const miles = parseFloat(document.getElementById('miles').value);
+      if (!(miles > 0)) { show(box, false); return; }
+      body.estimated_miles = miles;
+    } else {
+      const hours = parseFloat(document.getElementById('hours').value);
+      if (!(hours > 0)) { show(box, false); return; }
+      body.duration_hours = hours;
+    }
+    const r = await api('POST', '/rides/estimate', body);
+    if (r.status === 200 && r.data) {
+      document.getElementById('fareAmt').textContent = fmtCents(r.data.fare_estimate_cents);
+      show(box, true);
+    } else {
+      show(box, false);
+    }
+  }
+
+  async function doBook() {
+    const err = document.getElementById('bookErr');
+    err.textContent = '';
+    const pickup = document.getElementById('pickup').value.trim();
+    if (!pickup) { err.textContent = 'Pickup address is required.'; return; }
+    const when = document.getElementById('when').value;
+    const body = {
+      ride_type: rideType,
+      pickup_address: pickup,
+      scheduled_at: when ? new Date(when).toISOString() : null,
+      notes: document.getElementById('notes').value.trim() || null,
+      helmet_needed: document.getElementById('helmet').checked,
+      waiver_signed: document.getElementById('waiverCheck').checked,
+      waiver_name: document.getElementById('waiverName').value.trim(),
+      waiver_date: document.getElementById('waiverDate').value,
+    };
+    if (rideType === 'ride') {
+      const dropoff = document.getElementById('dropoff').value.trim();
+      if (dropoff) body.dropoff_address = dropoff;
+      const miles = parseFloat(document.getElementById('miles').value);
+      if (!(miles > 0)) { err.textContent = 'Enter the estimated miles for a ride.'; return; }
+      body.estimated_miles = miles;
+    } else {
+      const hours = parseFloat(document.getElementById('hours').value);
+      if (!(hours > 0)) { err.textContent = 'Enter the event duration in hours.'; return; }
+      body.duration_hours = hours;
+    }
+    if (!body.waiver_signed || !body.waiver_name || !body.waiver_date) {
+      err.textContent = 'The liability waiver (checkbox + typed name + date) is required before booking.';
+      return;
+    }
+    const r = await api('POST', '/rides/', body);
+    if (r.status !== 201) {
+      err.textContent = (r.data && r.data.detail) || 'Booking failed.';
+      return;
+    }
+    // reset the form
+    ['pickup', 'dropoff', 'miles', 'hours', 'notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('when').value = '';
+    document.getElementById('helmet').checked = false;
+    document.getElementById('waiverCheck').checked = false;
+    show(document.getElementById('fareBox'), false);
+    await loadMyRides();
+  }
+
+  /* ---------- my rides ---------- */
+
+  async function loadMyRides() {
+    const list = document.getElementById('ridesList');
+    const r = await api('GET', '/rides/me');
+    if (r.status !== 200) {
+      list.innerHTML = '<p class="status-line">Could not load your rides.</p>';
+      return;
+    }
+    const rides = r.data || [];
+    if (!rides.length) {
+      list.innerHTML = '<p class="status-line">No rides yet — your requests will show here.</p>';
+      return;
+    }
+    list.innerHTML = rides.map(rideCard).join('');
+    tickCountdowns();
+    rides.forEach(ride => {
+      if (ride.status === 'pending' || ride.status === 'matched') {
+        const btn = document.getElementById('cancel-' + ride.id);
+        if (btn) btn.addEventListener('click', () => doCancel(ride.id));
+      }
+      if (ride.biker_id && ride.status !== 'cancelled') wireThread(ride.id, 'r');
+    });
+  }
+
+  function rideCard(ride) {
+    const statusPill = (ride.status === 'cancelled' || ride.status === 'completed')
+      ? '<span class="pill">' + escapeHtml(ride.status) + '</span>'
+      : '<span class="pill ok">' + escapeHtml(ride.status) + '</span>';
+    const statusLine = ride.status_detail
+      ? '<div class="row"><span class="status-line">' + escapeHtml(ride.status_detail) + '</span></div>'
+      : '';
+    const detail = ride.ride_type === 'ride'
+      ? escapeHtml(ride.estimated_miles) + ' mi · ' +
+        (ride.dropoff_address ? '→ ' + escapeHtml(ride.dropoff_address) : 'no drop-off')
+      : escapeHtml(ride.duration_hours) + ' hr event';
+    const countdown = (ride.scheduled_at && (ride.status === 'pending' || ride.status === 'matched'))
+      ? ' <span class="countdown" data-countdown="' + escapeHtml(ride.scheduled_at) + '"></span>'
+      : '';
+    const bikerBox = (ride.assigned_biker && ride.status !== 'cancelled')
+      ? assignedBikerBox(ride.assigned_biker)
+      : '';
+    const cancellable = (ride.status === 'pending' || ride.status === 'matched')
+      ? '<button class="btn-danger cancel" id="cancel-' + ride.id + '" type="button">Cancel</button>'
+      : '';
+    const thread = (ride.biker_id && ride.status !== 'cancelled')
+      ? '<button class="btn-ghost msgtoggle" id="msgtoggle-r-' + ride.id +
+        '" type="button">💬 Messages</button>' + threadShell('r', ride.id)
+      : '';
+    return '<div class="ridecard">' +
+      '<div class="row"><strong>' + (ride.ride_type === 'ride' ? '🏍️ Ride' : '🎉 Event') +
+      '</strong><span>' + statusPill + '</span></div>' +
+      statusLine +
+      '<div class="row"><span>Pickup: ' + escapeHtml(ride.pickup_address) + '</span></div>' +
+      '<div class="row"><span>' + detail + '</span><strong>' + fmtCents(ride.fare_estimate_cents) + '</strong></div>' +
+      '<div class="row"><span>' + fmtWhen(ride.scheduled_at) + countdown +
+      (ride.helmet_needed ? ' · 🪖 helmet requested' : '') + '</span></div>' +
+      bikerBox +
+      cancellable + thread + '</div>';
+  }
+
+  function assignedBikerBox(b) {
+    const bike = [b.bike_year, b.bike_make, b.bike_model].filter(Boolean).join(' ');
+    const photo = b.photo_url
+      ? '<img src="' + escapeHtml(b.photo_url) + '" alt="Your biker\u2019s bike">'
+      : '';
+    return '<div class="bikerbox">' + photo + '<div><strong>🏍️ Your biker: ' +
+      escapeHtml(b.full_name) + '</strong><br>' + escapeHtml(bike) + '<br>' +
+      escapeHtml(b.city) + ', ' + escapeHtml(b.state) + '</div></div>';
+  }
+
+  /* ---------- ride countdown ticker (rider my-rides) ---------- */
+  function countdownText(iso) {
+    const t = new Date(iso).getTime();
+    if (isNaN(t)) return '';
+    let s = Math.floor((t - Date.now()) / 1000);
+    if (s <= 0) return '⏱ Pickup time has passed';
+    const d = Math.floor(s / 86400); s -= d * 86400;
+    const h = Math.floor(s / 3600); s -= h * 3600;
+    const m = Math.floor(s / 60);
+    const parts = [];
+    if (d > 0) parts.push(d + 'd');
+    if (h > 0 || d > 0) parts.push(h + 'h');
+    parts.push(m + 'm');
+    return '⏱ Pickup in ' + parts.join(' ');
+  }
+  function tickCountdowns() {
+    document.querySelectorAll('[data-countdown]').forEach(el => {
+      el.textContent = countdownText(el.getAttribute('data-countdown'));
+    });
+  }
+  setInterval(tickCountdowns, 60000);
+
+  async function doCancel(rideId) {
+    const err = document.getElementById('ridesErr');
+    err.textContent = '';
+    if (!confirm('Cancel this ride request?')) return;
+    const r = await api('POST', '/rides/' + rideId + '/cancel');
+    if (r.status !== 200) {
+      err.textContent = (r.data && r.data.detail) || 'Cancel failed.';
+      return;
+    }
+    await loadMyRides();
+  }
+
+  /* ---------- auth ---------- */
+
+  async function doLogin() {
+    const err = document.getElementById('authErr');
+    err.textContent = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password) { err.textContent = 'Enter email and password.'; return; }
+    const r = await api('POST', '/auth/login',
+      { username: email, password: password }, true);
+    if (r.status !== 200 || !r.data || !r.data.access_token) {
+      err.textContent = (r.data && r.data.detail) || 'Login failed.';
+      return;
+    }
+    token = r.data.access_token;
+    localStorage.setItem(TOKEN_KEY, token);
+    document.getElementById('password').value = '';
+    await refresh();
+  }
+
+  async function doRegister(role) {
+    const err = document.getElementById('authErr');
+    err.textContent = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const full_name = document.getElementById('fullname').value.trim();
+    if (!email || !password || !full_name) {
+      err.textContent = 'Email, password, and full name are required to register.';
+      return;
+    }
+    if (password.length < 8) { err.textContent = 'Password must be 8+ characters.'; return; }
+    const r = await api('POST', '/auth/register',
+      { email, password, full_name, role });
+    if (r.status !== 200 && r.status !== 201) {
+      err.textContent = (r.data && r.data.detail) || 'Registration failed.';
+      return;
+    }
+    await doLogin();
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  document.getElementById('registerRiderBtn').addEventListener('click', () => doRegister('rider'));
+  document.getElementById('registerBikerBtn').addEventListener('click', () => doRegister('biker'));
+  document.getElementById('logoutBtnBiker').addEventListener('click', doLogout);
+  document.getElementById('logoutBtnRider').addEventListener('click', doLogout);
+  document.getElementById('toggleBtn').addEventListener('click', doToggle);
+  document.getElementById('editProfileBtn').addEventListener('click', () => openProfileForm(profile));
+  document.getElementById('cancelEditBtn').addEventListener('click', () => {
+    show(document.getElementById('profileFormWrap'), false);
+    show(document.getElementById('cancelEditBtn'), false);
+  });
+  document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+  document.getElementById('pInsured').addEventListener('change', refreshInsBlocks);
+  document.getElementById('insCovers').addEventListener('change', refreshInsBlocks);
+  document.getElementById('typeRideBtn').addEventListener('click', () => setRideType('ride'));
+  document.getElementById('typeEventBtn').addEventListener('click', () => setRideType('event'));
+  document.getElementById('bookBtn').addEventListener('click', doBook);
+  document.getElementById('refreshDispatchBtn').addEventListener('click', loadDispatch);
+  document.getElementById('refreshMatchedBtn').addEventListener('click', loadMatched);
+  document.getElementById('refreshPayoutsBtn').addEventListener('click', loadPayouts);
+  document.getElementById('payoutFilterPending').addEventListener('click', () => setPayoutFilter('pending'));
+  document.getElementById('payoutFilterPaid').addEventListener('click', () => setPayoutFilter('paid'));
+  document.getElementById('exportPayoutsBtn').addEventListener('click', exportPayoutsCsv);
+  document.getElementById('tplRidersBtn').addEventListener('click', () => downloadImportTemplate('riders'));
+  document.getElementById('tplBikersBtn').addEventListener('click', () => downloadImportTemplate('bikers'));
+  document.getElementById('importUploadBtn').addEventListener('click', uploadImport);
+  document.getElementById('importCredsBtn').addEventListener('click', downloadImportCreds);
+  ['miles', 'hours'].forEach(id =>
+    document.getElementById(id).addEventListener('input', scheduleEstimate));
+
+  refresh();
+  loadLegalTexts();
+</script>
+</body>
+</html>
