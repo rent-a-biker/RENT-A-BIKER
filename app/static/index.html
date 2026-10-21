@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="/static/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
-<title>Rent a Biker — full app (in build)</title>
+<title>Rent a Biker — Book a motorcycle ride</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: -apple-system, system-ui, sans-serif;
@@ -50,6 +50,8 @@
   .pill.ok { background: #2fae4e; color: #06230e; }
   .pill.warn { background: #e8641c; color: #111; }
   .note { font-size: 13px; color: #999; margin-top: 10px; }
+  .tagline { font-size: 19px; font-weight: 700; color: #fff; margin: 4px 0 8px; }
+  .steps { line-height: 2; }
   .seg { display: flex; gap: 8px; margin-top: 8px; }
   .seg button { border: 1px solid #444; background: #111; color: #ddd; }
   .seg button.active { background: #e8641c; color: #111; border-color: #e8641c; }
@@ -103,21 +105,76 @@
 </head>
 <body>
 <div class="wrap">
-  <span class="badge">Internal build</span>
+  <!-- Public landing: what the old flyer signup page showed.
+       CTAs scroll to the register card below. Hidden after login. -->
+  <div id="landing">
   <h1>🏍️ RENT A BIKER</h1>
-  <p>The full Rent a Biker app is under construction here. Riders and bikers will
-     get accounts, request rides, message each other, and get matched — all inside
-     this app. Nothing here is customer-facing yet.</p>
+  <p class="tagline">Book a real motorcycle ride with an independent biker.</p>
+  <p>Joyrides, bar runs, events — pick your bike, name your route, and ride.
+     Flat <strong>$2.50/mile</strong>, no base fee. Sign up free.</p>
+
+  <div class="btnrow" style="margin-top:12px">
+    <button class="btn-primary" type="button" data-goto-register="rider">🏍️ I need a ride — Sign up free</button>
+    <button class="btn-ghost" type="button" data-goto-register="biker">💰 Ride &amp; earn — Become a biker</button>
+  </div>
 
   <div class="card">
-    <p><strong>API status:</strong> <code id="health">checking…</code></p>
-    <p><strong>API docs:</strong> <a href="/docs">/docs</a></p>
-    <p><strong>Rates:</strong> $2.50/mile rides · $75/hr events (2-hr min) · bikers keep 75%</p>
+    <h3>How it works</h3>
+    <p class="steps">1️⃣ <strong>Sign up free</strong> — riders and bikers, takes a minute.<br>
+       2️⃣ <strong>Get matched</strong> — we pair you with a biker near you.<br>
+       3️⃣ <strong>Ride</strong> — flat $2.50/mile. Bikers keep 75% of every fare.</p>
   </div>
+
+  <div class="card">
+    <h3>💰 Bikers: turn your bike into a paycheck</h3>
+    <p>Join free, set your availability, and keep <strong>75% of every fare</strong>.
+       Bikers are independent — not employees or agents of Rent a Biker — and ride
+       on their own insurance.</p>
+    <div class="btnrow">
+      <button class="btn-primary" type="button" data-goto-register="biker">Apply as a biker — it's free</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🛡️ Safety first</h3>
+    <p>Riders sign a liability acknowledgment before booking. Need a helmet?
+       Just ask — your biker can bring one.</p>
+    <div class="btnrow">
+      <button class="btn-primary" type="button" data-goto-register="rider">Book a ride</button>
+    </div>
+  </div>
+
+  <div class="btnrow" style="margin-top:12px">
+    <a href="https://www.tiktok.com/@tattookenny305" target="_blank" rel="noopener"
+       style="flex:1;min-width:140px;padding:12px;font-size:16px;font-weight:700;
+              border:0;border-radius:8px;cursor:pointer;background:#333;color:#fff;
+              text-align:center;text-decoration:none;display:block">🎬 Meet the creator</a>
+  </div>
+
+  <p class="note" style="text-align:center">API docs: <a href="/docs">/docs</a></p>
+  </div>
+  <script>
+  (function () {
+    function gotoRegister(mode) {
+      var card = document.getElementById('accountCard');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var btn = document.getElementById(mode === 'biker' ? 'registerBikerBtn' : 'registerRiderBtn');
+      if (btn) {
+        try { btn.focus({ preventScroll: true }); } catch (e) { btn.focus(); }
+        btn.style.boxShadow = '0 0 0 3px #e8641c';
+        setTimeout(function () { btn.style.boxShadow = ''; }, 1600);
+      }
+    }
+    document.querySelectorAll('[data-goto-register]').forEach(function (el) {
+      el.addEventListener('click', function () { gotoRegister(el.getAttribute('data-goto-register')); });
+    });
+  })();
+  </script>
 
   <!-- Sign in / register (both roles) -->
   <div class="card" id="accountCard">
-    <h3>Sign in</h3>
+    <h3>Create your free account</h3>
+    <p class="note" style="margin-top:0">Already registered? Just log in.</p>
     <label for="email">Email</label>
     <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
     <label for="password">Password</label>
@@ -360,6 +417,10 @@
     </div>
     <div class="err" id="ridesErr"></div>
   </div>
+
+  <footer style="margin-top:32px;text-align:center;font-size:13px;color:#999;">
+    <a id="privacyLink" href="/privacy">Privacy Policy</a>
+  </footer>
 </div>
 
 <script>
@@ -369,9 +430,25 @@
   let profile = null;
   let rideType = 'ride';
 
-  fetch('/health').then(r => r.json()).then(j => {
-    document.getElementById('health').textContent = j.ok ? 'OK' : 'DOWN';
-  }).catch(() => { document.getElementById('health').textContent = 'DOWN'; });
+  /* ---------- native-wrapper support (M9): API base override ----------
+     The web app normally talks to its own origin (API_BASE = ''). When the
+     frontend is bundled into a Capacitor native shell, the wrapper build
+     injects window.RAB_API_BASE = 'https://<live-app-url>' so every API call
+     below resolves against the live backend instead of capacitor://localhost.
+     Only https (or http://localhost for dev) is accepted; anything else is
+     ignored and the app keeps talking to its own origin. */
+  const API_BASE = (() => {
+    const raw = String(window.RAB_API_BASE || '').replace(/\/+$/, '');
+    if (/^https:\/\/[A-Za-z0-9.-]+(?::\d+)?(?:\/.*)?$/.test(raw)) return raw;
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(?::\d+)?(?:\/.*)?$/.test(raw)) return raw;
+    return '';
+  })();
+  const u = (path) => API_BASE + path;
+
+  fetch(u('/health')).then(r => r.json()).then(j => {
+    const el = document.getElementById('health');
+    if (el) el.textContent = j.ok ? 'OK' : 'DOWN';
+  }).catch(() => { const el = document.getElementById('health'); if (el) el.textContent = 'DOWN'; });
 
   async function api(method, path, body, form) {
     const headers = {};
@@ -386,13 +463,17 @@
         headers['Content-Type'] = 'application/json';
       }
     }
-    const res = await fetch(path, { method, headers, body: payload });
+    const res = await fetch(u(path), { method, headers, body: payload });
     let data = null;
     try { data = await res.json(); } catch (e) { /* non-JSON body */ }
     return { status: res.status, data };
   }
 
   function show(el, on) { el.classList.toggle('hidden', !on); }
+
+  /* Footer links must also honor the native-wrapper API base (the /privacy
+     page is server-rendered, so in bundled mode it stays a remote URL). */
+  document.getElementById('privacyLink').href = u('/privacy');
 
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
@@ -437,19 +518,20 @@
     const adminCard = document.getElementById('adminCard');
     const riderCard = document.getElementById('riderCard');
     const myRidesCard = document.getElementById('myRidesCard');
+    const landing = document.getElementById('landing');
     stopAllThreads();
     if (!token) {
       show(accountCard, true); show(bikerCard, false); show(adminCard, false);
-      show(riderCard, false); show(myRidesCard, false); return;
+      show(riderCard, false); show(myRidesCard, false); show(landing, true); return;
     }
     const r = await api('GET', '/auth/me');
     if (r.status !== 200) { // bad/expired token
       token = null; localStorage.removeItem(TOKEN_KEY);
       show(accountCard, true); show(bikerCard, false); show(adminCard, false);
-      show(riderCard, false); show(myRidesCard, false); return;
+      show(riderCard, false); show(myRidesCard, false); show(landing, true); return;
     }
     me = r.data;
-    show(accountCard, false);
+    show(accountCard, false); show(landing, false);
     if (me.role === 'biker' || me.role === 'admin') {
       show(bikerCard, true); show(riderCard, false); show(myRidesCard, false);
       await loadProfile();
@@ -860,7 +942,7 @@
     // The auth token rides in a bearer header, so this can't be a plain
     // <a href> download: fetch it, then trigger the download from a blob.
     try {
-      const r = await fetch('/admin/payouts/export.csv?status=' + payoutFilter, {
+      const r = await fetch(u('/admin/payouts/export.csv?status=') + payoutFilter, {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
       });
       if (!r.ok) { err.textContent = 'Export failed.'; return; }
@@ -883,7 +965,7 @@
     const err = document.getElementById('importErr');
     err.textContent = '';
     try {
-      const r = await fetch('/admin/import/templates/' + kind + '.csv', {
+      const r = await fetch(u('/admin/import/templates/') + kind + '.csv', {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
       });
       if (!r.ok) { err.textContent = 'Template download failed.'; return; }
@@ -916,7 +998,7 @@
     form.append('file', fileInput.files[0]);
     let r, data = null;
     try {
-      r = await fetch('/admin/import', {
+      r = await fetch(u('/admin/import'), {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) },
         body: form
@@ -1250,7 +1332,7 @@
     // The auth token rides in a Bearer <redacted>, so this can't be a plain
     // <a href> download: fetch it, then trigger the download from a blob.
     try {
-      const r = await fetch('/rides/earnings/export.csv', {
+      const r = await fetch(u('/rides/earnings/export.csv'), {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem(TOKEN_KEY) }
       });
       if (!r.ok) { err.textContent = 'Export failed.'; return; }

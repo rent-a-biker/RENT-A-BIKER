@@ -101,8 +101,8 @@ def main() -> int:
             h = json.loads(body.decode())
         except Exception:
             h = {}
-        check("health ok, version 0.20.0",
-              s == 200 and h.get("version") == "0.20.0", str(h))
+        check("health ok, version 0.21.0",
+              s == 200 and h.get("version") == "0.21.0", str(h))
 
         # --- 2. manifest served ---
         s, ctype, mbody = get_bytes("/static/manifest.webmanifest")

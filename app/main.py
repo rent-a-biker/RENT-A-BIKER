@@ -1,11 +1,14 @@
 """Rent a Biker — full app backend (M1 scaffold, M2 + M3 done, M4 dispatch,
-M5 messaging, M6 legal, M7 payout record-keeping part 1, M8 deploy prep)."""
+M5 messaging, M6 legal, M7 payout record-keeping part 1, M8 deploy prep,
+M9 store-prep: privacy policy page)."""
+import html as _html
 import os
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from . import legal as legal_texts
 from . import uploads
 from .auth import hash_password
 from .db import Base, SessionLocal, engine, DATABASE_URL
@@ -17,7 +20,7 @@ from .routers import rides as rides_router
 from .routers import admin as admin_router
 from .routers import legal as legal_router
 
-app = FastAPI(title="Rent a Biker API", version="0.20.0")
+app = FastAPI(title="Rent a Biker API", version="0.21.0")
 
 # Create tables on startup (Alembic migrations come with milestone 2+ if needed).
 Base.metadata.create_all(bind=engine)
@@ -133,3 +136,38 @@ def health():
 @app.get("/", include_in_schema=False)
 def index():
     return FileResponse(os.path.join(static_dir, "index.html"))
+
+
+def _render_policy_html() -> str:
+    """Render the server-canonical privacy text as HTML.
+
+    Keeps the single source of truth in app/legal.py: lines starting with
+    "# " become <h2> headings, blank-line-separated blocks become <p>s.
+    """
+    parts = []
+    for chunk in legal_texts.PRIVACY_POLICY_TEXT.split("\n\n"):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if chunk.startswith("# "):
+            parts.append(f"<h2>{_html.escape(chunk[2:].strip())}</h2>")
+        else:
+            parts.append(f"<p>{_html.escape(chunk)}</p>")
+    return "\n".join(parts)
+
+
+@app.get("/privacy", include_in_schema=False)
+def privacy():
+    """Server-rendered privacy policy page (linked from store listings)."""
+    tpl_path = os.path.join(static_dir, "privacy.html")
+    with open(tpl_path, encoding="utf-8") as fh:
+        tpl = fh.read()
+    page = (
+        tpl.replace(
+            "{{POLICY_VERSION}}",
+            _html.escape(legal_texts.PRIVACY_POLICY_VERSION),
+        )
+        .replace("{{UPDATED_DATE}}", "October 12, 2026")
+        .replace("{{POLICY_HTML}}", _render_policy_html())
+    )
+    return HTMLResponse(page)

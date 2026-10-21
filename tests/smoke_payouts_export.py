@@ -165,8 +165,8 @@ def main() -> int:
 
         # --- 1. version + frontend markers + OpenAPI contract ---
         s, h = api("GET", "/health")
-        check("health ok, version 0.20.0",
-              s == 200 and h.get("version") == "0.20.0", str(h))
+        check("health ok, version 0.21.0",
+              s == 200 and h.get("version") == "0.21.0", str(h))
 
         s, _, html = get_raw("/")
         check("frontend served", s == 200 and "<html" in html)

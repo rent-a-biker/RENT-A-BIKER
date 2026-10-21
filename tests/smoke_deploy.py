@@ -15,7 +15,7 @@ Verifies (stdlib only; no live Postgres needed):
      column on the SQLAlchemy models, has no duplicates, and its Postgres
      DDL compiles against the real postgresql dialect.
   5. A server booted with RAB_DATABASE_URL=sqlite (dev default) still boots
-     and reports version 0.20.0 — the Postgres refactor didn't change the
+     and reports version 0.21.0 — the Postgres refactor didn't change the
      dev path.
   6. Branding scan on new/changed files.
 
@@ -175,8 +175,8 @@ with tempfile.TemporaryDirectory() as tmp:
             except Exception:
                 time.sleep(0.5)
         check("dev sqlite server still boots after refactor", health is not None)
-        check("health reports version 0.20.0",
-              bool(health) and health.get("version") == "0.20.0", str(health))
+        check("health reports version 0.21.0",
+              bool(health) and health.get("version") == "0.21.0", str(health))
     finally:
         proc.terminate()
         try:

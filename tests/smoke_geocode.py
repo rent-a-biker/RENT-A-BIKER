@@ -166,8 +166,8 @@ def main() -> int:
             return 1
 
         s, h = api("GET", "/health")
-        check("health ok, version 0.20.0",
-              s == 200 and h.get("version") == "0.20.0", str(h))
+        check("health ok, version 0.21.0",
+              s == 200 and h.get("version") == "0.21.0", str(h))
 
         s, tok = api("POST", "/auth/login", form=True,
                      body={"username": "kenneth.admin@example.com",
